@@ -40,6 +40,24 @@ const routes = [
     path: "/create-inventory",
     name: "CreateInventory",
     component: CreateInventory,
+    children: [
+      {
+        path: "add",
+        component: AddItem,
+        props: true,
+        meta: {
+          showModal: true,
+        },
+      },
+      {
+        path: ":itemId",
+        component: ItemDetail,
+        props: true,
+        meta: {
+          showModal: true,
+        },
+      },
+    ],
   },
 ];
 

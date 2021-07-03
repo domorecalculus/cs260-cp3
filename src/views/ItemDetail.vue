@@ -1,18 +1,73 @@
 <template>
-  <div>
+  <div class="container">
     <div class="modal-header">
-      <button @click="deleteItem">Delete</button>
-      <button @click="editItem">Edit</button>
-      <router-link to="../">X</router-link>
+      <button @click="deleteItem"><i class="far fa-trash-alt"></i></button>
+      <a @click="$router.go(-1)"><i class="fas fa-times"></i></a>
     </div>
     <div v-if="isEditing">
-      <input v-model="newName" />
-      <input v-model="newQty" type="number" />
-      <button @click="saveItem">Save</button>
+      <h2>Edit Item</h2>
+      <table class="input-container">
+        <tr>
+          <td>
+            <label>Name:</label>
+          </td>
+          <td>
+            <input v-model="newName" />
+          </td>
+        </tr>
+        <tr v-for="(property, index) in inventoryProperties" :key="index">
+          <td>
+            <label>{{ property }}:</label>
+          </td>
+          <td>
+            <input v-model="newProperties[index]" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>Quantity:</label>
+          </td>
+          <td>
+            <input v-model="newQty" type="number" />
+          </td>
+        </tr>
+      </table>
+      <div class="bottom-buttons">
+        <button @click="cancelEdit">Cancel</button>
+        <button @click="saveItem">Save</button>
+      </div>
     </div>
     <div v-else>
-      <p>{{ item.name }}</p>
-      <p>{{ item.qty }}</p>
+      <h2>Item Details</h2>
+      <table class="input-container">
+        <tr>
+          <td>
+            <p>Name:</p>
+          </td>
+          <td>
+            <p>{{ item.name }}</p>
+          </td>
+        </tr>
+        <tr v-for="(property, index) in inventoryProperties" :key="index">
+          <td>
+            <p>{{ property }}:</p>
+          </td>
+          <td>
+            <p>{{ item[property] }}</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Quantity:</p>
+          </td>
+          <td>
+            <p>{{ item.qty }}</p>
+          </td>
+        </tr>
+      </table>
+      <div class="bottom-buttons">
+        <button @click="editItem">Edit</button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +82,7 @@ export default {
       ].find((x) => x.id == this.$route.params.itemId),
       newName: "",
       newQty: 0,
+      newProperties: [],
     };
   },
   computed: {
@@ -35,10 +91,18 @@ export default {
         this.$root.$data.store.activeInventory
       ];
     },
+    inventoryProperties() {
+      return this.$root.$data.store.properties[
+        this.$root.$data.store.activeInventory
+      ];
+    },
   },
   created() {
     this.newName = this.item.name;
     this.newQty = this.item.qty;
+    this.newProperties = this.$root.$data.store.properties[
+      this.$root.$data.store.activeInventory
+    ].map((x) => this.item[x]);
   },
   methods: {
     deleteItem() {
@@ -51,9 +115,16 @@ export default {
     editItem() {
       this.isEditing = true;
     },
+    cancelEdit() {
+      this.isEditing = false;
+    },
     saveItem() {
       this.item.name = this.newName;
       this.item.qty = this.newQty;
+      this.newProperties.forEach(
+        (value, index, arr) =>
+          (this.item[this.inventoryProperties[index]] = value)
+      );
       this.isEditing = false;
     },
   },
@@ -61,4 +132,62 @@ export default {
 </script>
 
 <style>
+.modal-header {
+  text-align: end;
+  padding-top: 10px;
+  padding: 10px 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.modal-header > button {
+  margin-right: auto;
+}
+
+.modal-header > a {
+  grid-column-start: 3;
+  font-size: 1.5em;
+  margin-left: auto;
+}
+
+.modal-header:first-child {
+  margin-right: auto;
+}
+
+.modal-header > a:hover {
+  cursor: pointer;
+  color: gray;
+}
+
+.modal-header > button:hover {
+  cursor: pointer;
+}
+
+.input-container {
+  margin: 20px auto;
+  padding: 0 30px;
+}
+
+.bottom-buttons {
+  margin-bottom: 30px;
+  margin-right: 30px;
+  text-align: end;
+}
+
+.bottom-buttons > button:hover {
+  cursor: pointer;
+}
+
+td {
+  vertical-align: text-top;
+}
+
+p {
+  margin: 0;
+  padding: 1px 0;
+}
+
+.add-form {
+  margin-bottom: 30px;
+}
 </style>

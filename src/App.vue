@@ -1,13 +1,18 @@
 <template>
   <div id="app">
     <div class="header">
-      <h1>Manifest</h1>
+      <h1><i class="far fa-clipboard title-icon"></i>Jota Organizer</h1>
     </div>
     <div class="content">
-      <side-bar />
+      <side-bar class="side-bar" />
       <router-view />
     </div>
-    <div class="footer"></div>
+    <div class="footer">
+      <p>
+        Look at source on
+        <a href="https://github.com/domorecalculus/cs260-cp3">Github</a>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -28,33 +33,44 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
 .header {
   background-color: navy;
   color: white;
-  font-style: oblique;
   height: 5vh;
   min-height: 5em;
   display: flex;
   align-content: center;
-  justify-content: center;
+  justify-content: start;
+}
+
+.title-icon {
+  margin-left: 1em;
+  margin-right: 0.3em;
 }
 
 .content {
-  display: flex;
-  flex-direction: row;
-  height: 95vh;
+  display: grid;
+  grid-template-columns: 15fr 85fr;
+  min-height: 95vh;
 }
 
 .footer {
   background-color: darkgray;
   height: 3em;
+  width: 100%;
 }
 
-side-bar {
-  min-width: 100px;
-  max-width: 200px;
+.footer > p {
+  line-height: 3em;
+}
+
+.side-bar {
+  min-width: 250px;
+  max-width: 400px;
   width: 15%;
 }
 </style>

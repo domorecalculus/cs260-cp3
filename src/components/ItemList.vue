@@ -3,7 +3,7 @@
     <router-link
       tag="div"
       class="item-container"
-      :to="`/inventory/${item.id}`"
+      :to="$route.path + `/${item.id}`"
       v-for="item in items"
       :key="item.id"
     >

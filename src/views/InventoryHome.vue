@@ -1,22 +1,63 @@
 <template>
-  <div class="content-container">
-    <div class="toolbar">
-      <input type="text" v-model="searchText" />
-      <router-link to="/inventory/add" tag="button">Add Item</router-link>
-    </div>
+  <div class="container">
+    <input
+      class="search-bar"
+      type="text"
+      placeholder="Search..."
+      v-model="searchText"
+    />
+    <br />
     <div class="inventory-items">
-      <item-list :items="searchedItems" />
+      <div class="add-items-container">
+        <router-link to="/inventory/add" class="add-item pure-button"
+          >Add Item</router-link
+        >
+      </div>
+      <table class="pure-table pure-table-horizontal">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th
+              v-for="(property, index) in inventoryProperties"
+              v-bind:key="index"
+            >
+              {{ property }}
+            </th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in searchedItems" :key="item.id">
+            <td>
+              <router-link :to="$route.path + `/${item.id}`"
+                ><i class="far fa-edit"></i
+              ></router-link>
+            </td>
+            <td>{{ item["name"] }}</td>
+            <td
+              v-for="(property, index) in inventoryProperties"
+              v-bind:key="index"
+            >
+              {{ item[property] }}
+            </td>
+            <td>{{ item["qty"] }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- <item-list :items="searchedItems" /> -->
       <div v-if="showModal" class="modal-route">
         <div class="modal-content">
           <router-view></router-view>
         </div>
       </div>
     </div>
+    <div class="spacer"></div>
   </div>
 </template>
 
 <script>
-import ItemList from "../components/ItemList.vue";
+//import ItemList from "../components/ItemList.vue";
 
 export default {
   name: "InventoryHome",
@@ -36,6 +77,11 @@ export default {
             this.$root.$data.store.activeInventory
           ].filter((x) => x.name.includes(this.searchText));
     },
+    inventoryProperties() {
+      return this.$root.$data.store.properties[
+        this.$root.$data.store.activeInventory
+      ];
+    },
   },
   watch: {
     $route: {
@@ -46,24 +92,71 @@ export default {
     },
   },
   components: {
-    ItemList,
-  },
-  methods: {
-    ItemList,
+    // ItemList,
   },
 };
 </script>
 
 <style scoped>
-.content-container {
+.container {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+.search-bar {
+  font-size: 1.2em;
+  line-height: 2em;
+  border-radius: 1em;
+  width: 50ch;
+  padding-left: 10px;
+  margin-top: 30px;
+  margin-bottom: 35px;
+}
+
+.search-bar:focus {
+  outline: transparent;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  text-align: center;
+}
+
+th,
+td {
+  border-bottom: 1px solid gray;
+}
+
+td > a {
+  color: black;
+}
+
+td > a:hover {
+  color: gray;
+}
+
 .inventory-items {
-  display: flex;
-  flex-direction: row;
+  width: 70%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.add-items-container {
+  text-align: end;
+}
+
+.add-item {
+  font-weight: bold;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.add-item:hover {
+  cursor: pointer;
 }
 
 .modal-route {
@@ -76,11 +169,18 @@ export default {
 }
 
 .modal-content {
-  width: 50%;
+  width: 40%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
+}
+
+.spacer {
+  height: 200px;
+  width: 100%;
+  display: flex;
+  justify-content: end;
 }
 </style>
